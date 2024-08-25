@@ -18,6 +18,10 @@ public class ToDoFormController {
     @Autowired
     private ToDoItemRepository toDoItemRepository;
 
+    @GetMapping("/create-todo")
+    public String showCreateFormToDoItem(ToDoItem toDoItem){
+        return "add-todo-item";
+    }
     @GetMapping("/edit/{id}")
     public String showUpdateForm(@PathVariable("id") long id, Model model) {
         ToDoItem toDoItem = toDoItemRepository
@@ -25,7 +29,6 @@ public class ToDoFormController {
                 .orElseThrow(() -> new IllegalArgumentException("ToDoItem id: " + id + " not found"));
         model.addAttribute("toDo", toDoItem);
         return "update-todo-item";
-
 
     }
     @GetMapping("/delete/{id}")

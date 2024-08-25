@@ -23,21 +23,35 @@ public class ToDoItemController {
 
     @Autowired
     private ToDoItemRepository toDoItemRepository;
+
     @GetMapping("/")
-    public ModelAndView index(){
+    public ModelAndView index() {
         logger.debug("request to GET index");
         ModelAndView modelAndView = new ModelAndView("index");
         modelAndView.addObject("todoItems", toDoItemRepository.findAll());
         return modelAndView;
     }
+
     @PostMapping("/todo/{id}")
     public String updateToDoItem(
             @PathVariable("id") long id, @Valid ToDoItem toDoItem, BindingResult result, Model model
-    ){
-        if (result.hasErrors()){
+    ) {
+        if (result.hasErrors()) {
             toDoItem.setId(id);
             return "update-todo-item";
         }
+        toDoItem.setModifiedDate(Instant.now());
+        toDoItemRepository.save(toDoItem);
+        return "redirect:/";
+
+    }
+
+    @PostMapping("/todo")
+    public String createToDoItem(@Valid ToDoItem toDoItem, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "add-todo-item";
+        }
+        toDoItem.setCreatedDate(Instant.now());
         toDoItem.setModifiedDate(Instant.now());
         toDoItemRepository.save(toDoItem);
         return "redirect:/";
